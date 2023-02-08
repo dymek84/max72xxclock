@@ -82,11 +82,11 @@ void setup()
   Serial.begin(115200);
   initMAX7219();
   sendCmdAll(CMD_SHUTDOWN, 1);
-  sendCmdAll(CMD_INTENSITY, 1); // Adjust the brightness between 0 and 15
+  sendCmdAll(CMD_INTENSITY, 15); // Adjust the brightness between 0 and 15
   Serial.print("Connecting WiFi ");
   WiFi.begin(ssid, password);
   // printdate();
-  printStringWithShift("Connecting ", 16);
+  printStringWithShift("Connecting DHTPIN D4 ", 16);
   Wire.begin();
   rtc.begin();
   // rtc.adjust(DateTime(2023, 1, 26, 23, 50, 0));
@@ -95,14 +95,14 @@ void setup()
   {
     aaa++;
     delay(500);
-      Serial.println(",.");
+    Serial.println(",.");
     if (aaa >= 3)
     {
       break;
     }
   }
-    Serial.print("Connected: ");
-    Serial.println(WiFi.localIP());
+  Serial.print("Connected: ");
+  Serial.println(WiFi.localIP());
 }
 // =======================================================================
 #define MAX_DIGITS 16
@@ -188,7 +188,8 @@ void digit8TEST()
 // =======================================================================
 void loop()
 {
-  digit8TEST();
+  digits8.clear();
+  digits8.printDigit(h * 100 + m, 1);
   if (dots)
   {
     display.showNumberDec(h * 100 + m, false);
@@ -210,6 +211,7 @@ void loop()
   temperature += "%  T: ";
   temperature += roundoff(temp, 1);
   temperature += "°C ";
+  digits8.printDigit(roundoff(temp, 1), 6);
   if (updCnt <= 0)
   { // every 10 scrolls, ~450s=7.5m
     updCnt = 10;
@@ -258,10 +260,10 @@ void loop()
     sendCmdAll(CMD_INTENSITY, 0);
   // 6pm to 11pm, intensity = 2
   else if ((h >= 18) && (h <= 23))
-    sendCmdAll(CMD_INTENSITY, 2);
+    sendCmdAll(CMD_INTENSITY, 5);
   // max brightness during bright daylight
   else
-    sendCmdAll(CMD_INTENSITY, 10);
+    sendCmdAll(CMD_INTENSITY, 15);
 }
 
 // =======================================================================
